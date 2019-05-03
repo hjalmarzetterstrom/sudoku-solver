@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataBoard = new System.Windows.Forms.DataGridView();
             this.x1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.x2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -49,7 +49,7 @@
             this.x8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.x9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnSolve = new System.Windows.Forms.Button();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.SolveThread = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.dataBoard)).BeginInit();
             this.SuspendLayout();
             // 
@@ -78,8 +78,8 @@
             this.dataBoard.Name = "dataBoard";
             this.dataBoard.RowHeadersVisible = false;
             this.dataBoard.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridViewCellStyle20.NullValue = " ";
-            this.dataBoard.RowsDefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle10.NullValue = " ";
+            this.dataBoard.RowsDefaultCellStyle = dataGridViewCellStyle10;
             this.dataBoard.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.dataBoard.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("MS Reference Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dataBoard.RowTemplate.Height = 40;
@@ -91,8 +91,8 @@
             // 
             // x1
             // 
-            dataGridViewCellStyle11.NullValue = " ";
-            this.x1.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle1.NullValue = " ";
+            this.x1.DefaultCellStyle = dataGridViewCellStyle1;
             this.x1.HeaderText = "x1";
             this.x1.MaxInputLength = 1;
             this.x1.Name = "x1";
@@ -102,8 +102,8 @@
             // 
             // x2
             // 
-            dataGridViewCellStyle12.NullValue = " ";
-            this.x2.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle2.NullValue = " ";
+            this.x2.DefaultCellStyle = dataGridViewCellStyle2;
             this.x2.HeaderText = "x2";
             this.x2.MaxInputLength = 1;
             this.x2.Name = "x2";
@@ -111,8 +111,8 @@
             // 
             // x3
             // 
-            dataGridViewCellStyle13.NullValue = " ";
-            this.x3.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle3.NullValue = " ";
+            this.x3.DefaultCellStyle = dataGridViewCellStyle3;
             this.x3.DividerWidth = 2;
             this.x3.HeaderText = "x3";
             this.x3.MaxInputLength = 1;
@@ -121,8 +121,8 @@
             // 
             // x4
             // 
-            dataGridViewCellStyle14.NullValue = " ";
-            this.x4.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle4.NullValue = " ";
+            this.x4.DefaultCellStyle = dataGridViewCellStyle4;
             this.x4.HeaderText = "x4";
             this.x4.MaxInputLength = 1;
             this.x4.Name = "x4";
@@ -130,8 +130,8 @@
             // 
             // x5
             // 
-            dataGridViewCellStyle15.NullValue = " ";
-            this.x5.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle5.NullValue = " ";
+            this.x5.DefaultCellStyle = dataGridViewCellStyle5;
             this.x5.HeaderText = "x5";
             this.x5.MaxInputLength = 1;
             this.x5.Name = "x5";
@@ -139,8 +139,8 @@
             // 
             // x6
             // 
-            dataGridViewCellStyle16.NullValue = " ";
-            this.x6.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle6.NullValue = " ";
+            this.x6.DefaultCellStyle = dataGridViewCellStyle6;
             this.x6.DividerWidth = 2;
             this.x6.HeaderText = "x6";
             this.x6.MaxInputLength = 1;
@@ -149,8 +149,8 @@
             // 
             // x7
             // 
-            dataGridViewCellStyle17.NullValue = " ";
-            this.x7.DefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle7.NullValue = " ";
+            this.x7.DefaultCellStyle = dataGridViewCellStyle7;
             this.x7.HeaderText = "x7";
             this.x7.MaxInputLength = 1;
             this.x7.Name = "x7";
@@ -158,8 +158,8 @@
             // 
             // x8
             // 
-            dataGridViewCellStyle18.NullValue = " ";
-            this.x8.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle8.NullValue = " ";
+            this.x8.DefaultCellStyle = dataGridViewCellStyle8;
             this.x8.HeaderText = "x8";
             this.x8.MaxInputLength = 1;
             this.x8.Name = "x8";
@@ -167,8 +167,8 @@
             // 
             // x9
             // 
-            dataGridViewCellStyle19.NullValue = " ";
-            this.x9.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle9.NullValue = " ";
+            this.x9.DefaultCellStyle = dataGridViewCellStyle9;
             this.x9.HeaderText = "x9";
             this.x9.MaxInputLength = 1;
             this.x9.Name = "x9";
@@ -189,9 +189,10 @@
             this.btnSolve.UseVisualStyleBackColor = true;
             this.btnSolve.Click += new System.EventHandler(this.btnSolve_Click);
             // 
-            // backgroundWorker1
+            // SolveThread
             // 
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.SolveThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.SolveThread.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SolveThread_RunWorkerCompleted);
             // 
             // Form1
             // 
@@ -221,7 +222,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn x7;
         private System.Windows.Forms.DataGridViewTextBoxColumn x8;
         private System.Windows.Forms.DataGridViewTextBoxColumn x9;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.ComponentModel.BackgroundWorker SolveThread;
     }
 }
 
