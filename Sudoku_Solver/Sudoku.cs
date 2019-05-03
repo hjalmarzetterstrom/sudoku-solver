@@ -4,12 +4,19 @@ using System.Linq;
 
 namespace Sudoku_Solver
 {
-
     class Point : IEqualityComparer<Point>
     {
         public int X { get; set; }
         public int Y { get; set; }
         public int Value { get; set; }
+        public List<int> Options { get; set; }
+        public int numOfOptions { get { return Options.Count(); } }
+
+        public Point()
+        {
+            Options = new List<int>();
+        }
+
         #region IEqual
         public static bool operator ==(Point point1, Point point2)
         {
@@ -73,7 +80,12 @@ namespace Sudoku_Solver
 
     class Sudoku
     {
+        #region Props/Fields
+        public delegate void Progress(Point[] board);
+        public event Progress ShowProgress;
         public Point[] Board { get; set; }
+        private Point[] SortedBoard { get { return SortByOptions(); } }
+        private Stack<Point[]> _altBoards { get; set; }
         private SubBoard[] SubBoards
         {
             get
@@ -89,11 +101,16 @@ namespace Sudoku_Solver
                 return newCollection;
             }
         }
+        public bool Correct { get { return CorrectGame(); } }
+        public bool Finished { get { return Correct && !HasEmptyCells(); } }
         private bool _unsolvable;
+        Queue<Point> CellQueue; 
+        #endregion
 
         public Sudoku(int[][] board)
         {
             _unsolvable = false;
+            _altBoards = new Stack<Point[]>();
             Board = new Point[81];
 
             for (int i = 0, j = 0; i < 9; i++)
@@ -103,45 +120,90 @@ namespace Sudoku_Solver
                     Board[j] = new Point { X = k, Y = i, Value = board[i][k] };
                 }
             }
-        }
 
+            UpdateOptions();
+        }
+        
+        #region Solve
         public void Solve()
         {
             Point emptyMatch = GetNextEmptyCell();
             if (emptyMatch == null) return;
-            
+
             int[] numbers = SortByCommon();
 
-            foreach (int i in numbers)
+            foreach (int i in emptyMatch.Options)
             {
                 if (!ZoneContains(emptyMatch, i) && CheckAvailability(emptyMatch, i))
                 {
                     UpdatePoint(emptyMatch, i);
                     _unsolvable = false;
+                    Reset();
                     break;
                 }
             }
 
             Solve();
+
+            if (!Finished)
+            {
+                Reset();
+                UpdateOptions();
+
+                CellQueue = new Queue<Point>();
+                foreach (Point p in SortedBoard.Where(x => x.Value < 0))
+                {
+                    CellQueue.Enqueue(p);
+                }
+
+                Crossroads();
+            }
         }
 
-        public void Next()
+        private void Crossroads()
+        {
+            if (Finished || CellQueue.Count == 0) return;
+
+            _altBoards.Push(CreateClone(Board));
+            Point currentCell = CellQueue.Dequeue();
+            foreach (int i in currentCell.Options)
+            {
+                if (Finished) break;
+                else Board = CreateClone(_altBoards.Peek());
+
+                UpdatePoint(currentCell, i);
+
+                SolveCrossroad();
+            }
+
+            if (!Finished)
+                Board = _altBoards.Pop();
+
+            Crossroads();
+        }
+
+        private void SolveCrossroad()
         {
             Point emptyMatch = GetNextEmptyCell();
             if (emptyMatch == null) return;
 
             int[] numbers = SortByCommon();
 
-            foreach (int i in numbers)
+            foreach (int i in emptyMatch.Options)
             {
                 if (!ZoneContains(emptyMatch, i) && CheckAvailability(emptyMatch, i))
                 {
                     UpdatePoint(emptyMatch, i);
+
                     _unsolvable = false;
+                    Reset();
                     break;
                 }
             }
+
+            SolveCrossroad();
         }
+        #endregion
 
         #region Contains
 
@@ -156,18 +218,18 @@ namespace Sudoku_Solver
 
         private bool HorizontalContains(Point centerPoint, int i)
         {
-            return Board.Where(x => x.X == centerPoint.X).Select(x => x.Value).Contains(i);
+            return Board.Where(x => x.X == centerPoint.X && x != centerPoint).Select(x => x.Value).Contains(i);
         }
 
         private bool VerticalContains(Point centerPoint, int i)
         {
-            return Board.Where(x => x.Y == centerPoint.Y).Select(x => x.Value).Contains(i);
+            return Board.Where(x => x.Y == centerPoint.Y && x != centerPoint).Select(x => x.Value).Contains(i);
         }
 
         private bool SubContains(Point centerPoint, int i)
         {
             SubBoard sub = GetSub(centerPoint);
-            return sub.Points.Select(x => x.Value).Contains(i);
+            return sub.Points.Where(x => x != centerPoint).Select(x => x.Value).Contains(i);
         }
 
         private bool SubContains(SubBoard sub, int i)
@@ -313,9 +375,49 @@ namespace Sudoku_Solver
         }
         #endregion
 
+        #region META
+        private bool CorrectGame()
+        {
+            foreach (Point p in Board.Where(x => x.Value > 0))
+            {
+                if (ZoneContains(p, p.Value))
+                    return false;
+            }
+            return true;
+        }
+
+        private bool HasEmptyCells()
+        {
+            return Board.Select(x => x.Value).Contains(-1) || Board.Select(x => x.Value).Contains(0);
+        }
+
+        private int CountEmptyCells()
+        {
+            return Board.Count(x => x.Value < 1);
+        }
+
+        private Point[] CreateClone(Point[] array)
+        {
+            Point[] clone = new Point[Board.Length];
+            for (int i = 0; i < Board.Length; i++)
+            {
+                Point val = new Point { X = Board[i].X, Y = Board[i].Y, Value = Board[i].Value, Options = Board[i].Options };
+                clone[i] = val;
+            }
+            return clone;
+        }
+
+        private void Reset()
+        {
+            foreach (var p in Board.Where(x => x.Value == 0))
+            {
+                UpdatePoint(p, -1);
+            }
+        }
+        
         private Point GetNextEmptyCell()
         {
-            Point next = Board.FirstOrDefault(x => x.Value == -1);
+            Point next = Board.OrderBy(x => x.numOfOptions).FirstOrDefault(x => x.Value == -1);
 
             if (next != null)
             {
@@ -323,10 +425,7 @@ namespace Sudoku_Solver
             }
             else if (Board.Select(x => x.Value).Contains(0))
             {
-                foreach (var p in Board.Where(x => x.Value == 0))
-                {
-                    UpdatePoint(p, -1);
-                }
+                Reset();
 
                 next = _unsolvable ? null : GetNextEmptyCell();
                 _unsolvable = true;
@@ -334,7 +433,9 @@ namespace Sudoku_Solver
 
             return next;
         }
+        #endregion
 
+        #region Sort
         private int[] SortByCommon()
         {
             int[][] countArray = new int[9][];
@@ -353,6 +454,45 @@ namespace Sudoku_Solver
             return sortedArray;
         }
 
+        private Point[] SortByOptions()
+        {
+            List<Point> newCollection = new List<Point>();
+            int[] numbers = SortByCommon();
+
+            foreach (Point p in Board)
+            {
+                foreach (int number in numbers)
+                {
+                    if (!ZoneContains(p, number))
+                    {
+                        p.Options.Add(number);
+                    }
+                }
+
+                p.Options.Reverse();
+                newCollection.Add(p);
+            }
+
+            return newCollection.OrderBy(x => x.numOfOptions).ToArray();
+        }
+        #endregion
+
+        #region Update
+        private void UpdateOptions()
+        {
+            int[] numbers = SortByCommon();
+            foreach (Point p in Board)
+            {
+                foreach (int number in numbers)
+                {
+                    if (!ZoneContains(p, number))
+                    {
+                        p.Options.Add(number);
+                    }
+                }
+            }
+        }
+
         private void UpdatePoint(Point point, int value)
         {
             for (int i = 0; i < Board.Length; i++)
@@ -363,6 +503,9 @@ namespace Sudoku_Solver
                     break;
                 }
             }
+            if (value != 0)
+                ShowProgress(Board);
         }
+        #endregion
     }
 }
